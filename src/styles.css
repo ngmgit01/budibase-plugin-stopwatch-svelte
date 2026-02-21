@@ -1,0 +1,24 @@
+.stopwatch {
+  font-family: monospace;
+  text-align: center;
+}
+
+.time {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.pause {
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}

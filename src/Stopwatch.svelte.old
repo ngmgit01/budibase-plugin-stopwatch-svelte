@@ -1,0 +1,65 @@
+<script lang="ts">
+  import "./styles.css";
+
+  export let emit: (key: string, value: any) => void;
+
+  let seconds = 0;
+  let running = false;
+  let paused = false;
+  let interval: number | null = null;
+
+  function start() {
+    if (!running) {
+      emit("startTime", new Date().toISOString());
+    }
+    running = true;
+    paused = false;
+    tick();
+  }
+
+  function pause() {
+    paused = !paused;
+    if (paused && interval) {
+      clearInterval(interval);
+      interval = null;
+    } else if (!paused) {
+      tick();
+    }
+  }
+
+  function stop() {
+    running = false;
+    paused = false;
+    if (interval) clearInterval(interval);
+    emit("elapsedSeconds", seconds);
+    emit("elapsedMinutes", Math.floor(seconds / 60));
+    seconds = 0;
+    interval = null;
+  }
+
+  function tick() {
+    if (interval) return;
+    interval = setInterval(() => {
+      seconds += 1;
+    }, 1000);
+  }
+
+  function format(s: number) {
+    return new Date(s * 1000).toISOString().substring(11, 19);
+  }
+</script>
+
+<div class="stopwatch">
+  <div class="time">{format(seconds)}</div>
+
+  <button on:click={start}>Start</button>
+
+  <button
+    on:click={pause}
+    class:pause={paused}
+  >
+    Pause
+  </button>
+
+  <button on:click={stop}>Stop</button>
+</div>
