@@ -1,0 +1,12 @@
+{
+  "name": "stopwatch",
+  "version": "1.0.0",
+  "type": "component",
+  "displayName": "Stopwatch",
+  "description": "Svelte stopwatch with start, pause, stop and minute tracking",
+  "outputs": [
+    { "name": "startTime", "type": "string" },
+    { "name": "elapsedSeconds", "type": "number" },
+    { "name": "elapsedMinutes", "type": "number" }
+  ]
+}

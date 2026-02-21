@@ -1,0 +1,49 @@
+{
+  "name": "stopwatch",
+  "version": "1.1.0",
+  "type": "component",
+  "displayName": "Stopwatch",
+  "description": "Svelte stopwatch with start, pause, stop and minute tracking",
+  "outputs": [
+    { "name": "startTime", "type": "string" },
+    { "name": "elapsedSeconds", "type": "number" },
+    { "name": "elapsedMinutes", "type": "number" }
+  ],
+  "settings": [
+    {
+      "key": "autoStart",
+      "label": "Auto start",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "emitStartTime",
+      "label": "Emit start time on start",
+      "type": "boolean",
+      "default": true
+    },
+    {
+      "key": "emitOnPause",
+      "label": "Emit elapsed minutes on pause",
+      "type": "boolean",
+      "default": false
+    },
+    {
+      "key": "displayFormat",
+      "label": "Display format",
+      "type": "select",
+      "options": [
+        { "label": "HH:MM:SS", "value": "hms" },
+        { "label": "MM:SS", "value": "ms" }
+      ],
+      "default": "hms"
+    },
+    {
+      "key": "tickInterval",
+      "label": "Tick interval (seconds)",
+      "type": "number",
+      "default": 1,
+      "min": 1
+    }
+  ]
+}
