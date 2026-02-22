@@ -1,65 +1,11 @@
 {
-  "name": "stopwatch",
-  "version": "1.1.0",
+  "name": "Stopwatch",
+  "slug": "stopwatch",
   "type": "component",
-  "displayName": "Stopwatch",
-  "description": "A stopwatch component with start, pause, and stop controls. Emits elapsed time for use with Budibase bindings and automations.",
-  "outputs": [
-    {
-      "name": "startTime",
-      "type": "string",
-      "description": "ISO timestamp when the stopwatch is started"
-    },
-    {
-      "name": "elapsedSeconds",
-      "type": "number",
-      "description": "Total elapsed seconds when the stopwatch stops"
-    },
-    {
-      "name": "elapsedMinutes",
-      "type": "number",
-      "description": "Total elapsed minutes (rounded down)"
-    }
-  ],
-  "settings": [
-    {
-      "key": "autoStart",
-      "label": "Auto start",
-      "description": "Automatically start the stopwatch when the component loads",
-      "type": "boolean",
-      "default": false
-    },
-    {
-      "key": "emitStartTime",
-      "label": "Emit start time",
-      "description": "Emit the start timestamp when the stopwatch starts",
-      "type": "boolean",
-      "default": true
-    },
-    {
-      "key": "emitOnPause",
-      "label": "Emit minutes on pause",
-      "description": "Emit elapsed minutes whenever the stopwatch is paused",
-      "type": "boolean",
-      "default": false
-    },
-    {
-      "key": "displayFormat",
-      "label": "Display format",
-      "description": "How the stopwatch time is displayed",
-      "type": "select",
-      "options": [
-        { "label": "HH:MM:SS", "value": "hms" },
-        { "label": "MM:SS", "value": "ms" }
-      ],
-      "default": "hms"
-    },
-    {
-      "key": "tickInterval",
-      "label": "Tick interval (seconds)",
-      "description": "How often the stopwatch updates its time",
-      "type": "number",
-      "default": 1
-    }
-  ]
+  "version": "1.2.0",
+  "description": "Accessible stopwatch component for Budibase. Displays minutes, seconds, and hundredths with start, pause, and stop controls.",
+  "entry": "dist/Stopwatch.svelte",
+  "settings": "./schema.json",
+  "outputs": "./outputs.json",
+  "icon": "timer"
 }

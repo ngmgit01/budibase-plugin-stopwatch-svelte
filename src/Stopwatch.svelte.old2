@@ -1,0 +1,122 @@
+<script lang="ts">
+  import "./styles.css";
+  import { onMount } from "svelte";
+
+  export let emit: (key: string, value: any) => void;
+  export let settings: {
+    autoStart: boolean;
+    emitStartTime: boolean;
+    emitOnPause: boolean;
+    tickInterval: number; // in milliseconds
+  };
+
+  let elapsedMs = 0;
+  let running = false;
+  let paused = false;
+  let stoppedOnce = false;
+  let interval: number | null = null;
+
+  const DEFAULT_INTERVAL = 10; // 10ms = hundredths
+
+  function start() {
+    if (!running) {
+      if (settings.emitStartTime) {
+        emit("startTime", new Date().toISOString());
+      }
+      running = true;
+      paused = false;
+      stoppedOnce = false;
+      tick();
+    }
+  }
+
+  function pause() {
+    if (!running) return;
+
+    paused = !paused;
+
+    if (paused && interval) {
+      clearInterval(interval);
+      interval = null;
+
+      if (settings.emitOnPause) {
+        emit("elapsedMinutes", Math.floor(elapsedMs / 60000));
+      }
+    } else if (!paused) {
+      tick();
+    }
+  }
+
+  function stop() {
+    // SECOND stop → reset
+    if (!running && stoppedOnce) {
+      elapsedMs = 0;
+      stoppedOnce = false;
+      return;
+    }
+
+    // FIRST stop → emit + freeze
+    if (interval) clearInterval(interval);
+
+    running = false;
+    paused = false;
+    stoppedOnce = true;
+
+    emit("elapsedSeconds", Math.floor(elapsedMs / 1000));
+    emit("elapsedMinutes", Math.floor(elapsedMs / 60000));
+  }
+
+  function tick() {
+    if (interval) return;
+
+    const step =
+      typeof settings.tickInterval === "number" && settings.tickInterval > 0
+        ? settings.tickInterval
+        : DEFAULT_INTERVAL;
+
+    interval = setInterval(() => {
+      elapsedMs += step;
+    }, step);
+  }
+
+  function format(ms: number) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const hundredths = Math.floor((ms % 1000) / 10);
+
+    return (
+      String(minutes).padStart(2, "0") +
+      ":" +
+      String(seconds).padStart(2, "0") +
+      ":" +
+      String(hundredths).padStart(2, "0")
+    );
+  }
+
+  onMount(() => {
+    if (settings.autoStart) {
+      start();
+    }
+  });
+</script>
+
+<div class="stopwatch">
+  <div class="time">{format(elapsedMs)}</div>
+
+  <button on:click={start} disabled={running && !paused}>
+    Start
+  </button>
+
+  <button
+    on:click={pause}
+    class:pause={paused}
+    disabled={!running}
+  >
+    Pause
+  </button>
+
+  <button on:click={stop}>
+    Stop
+  </button>
+</div>

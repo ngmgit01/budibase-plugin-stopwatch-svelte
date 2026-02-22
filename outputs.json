@@ -1,0 +1,17 @@
+{
+  "startTime": {
+    "type": "string",
+    "label": "Start time (ISO)",
+    "description": "ISO timestamp emitted when the stopwatch starts."
+  },
+  "elapsedSeconds": {
+    "type": "number",
+    "label": "Elapsed seconds",
+    "description": "Total elapsed time in seconds when the stopwatch is stopped."
+  },
+  "elapsedMinutes": {
+    "type": "number",
+    "label": "Elapsed minutes",
+    "description": "Total elapsed time in minutes when the stopwatch is stopped or paused."
+  }
+}

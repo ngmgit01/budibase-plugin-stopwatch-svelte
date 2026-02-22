@@ -7,25 +7,32 @@
     autoStart: boolean;
     emitStartTime: boolean;
     emitOnPause: boolean;
-    displayFormat: "hms" | "ms";
-    tickInterval: number;
+    tickInterval: number; // in milliseconds
   };
 
-  let seconds = 0;
+  let elapsedMs = 0;
   let running = false;
   let paused = false;
+  let stoppedOnce = false;
   let interval: number | null = null;
 
+  const DEFAULT_INTERVAL = 10; // 10ms = hundredths
+
   function start() {
-    if (!running && settings.emitStartTime) {
-      emit("startTime", new Date().toISOString());
+    if (!running) {
+      if (settings.emitStartTime) {
+        emit("startTime", new Date().toISOString());
+      }
+      running = true;
+      paused = false;
+      stoppedOnce = false;
+      tick();
     }
-    running = true;
-    paused = false;
-    tick();
   }
 
   function pause() {
+    if (!running) return;
+
     paused = !paused;
 
     if (paused && interval) {
@@ -33,7 +40,7 @@
       interval = null;
 
       if (settings.emitOnPause) {
-        emit("elapsedMinutes", Math.floor(seconds / 60));
+        emit("elapsedMinutes", Math.floor(elapsedMs / 60000));
       }
     } else if (!paused) {
       tick();
@@ -41,31 +48,50 @@
   }
 
   function stop() {
-    running = false;
-    paused = false;
+    // SECOND stop → reset
+    if (!running && stoppedOnce) {
+      elapsedMs = 0;
+      stoppedOnce = false;
+      return;
+    }
+
+    // FIRST stop → emit + freeze
     if (interval) clearInterval(interval);
 
-    emit("elapsedSeconds", seconds);
-    emit("elapsedMinutes", Math.floor(seconds / 60));
+    running = false;
+    paused = false;
+    stoppedOnce = true;
 
-    seconds = 0;
-    interval = null;
+    emit("elapsedSeconds", Math.floor(elapsedMs / 1000));
+    emit("elapsedMinutes", Math.floor(elapsedMs / 60000));
   }
 
   function tick() {
     if (interval) return;
+
+    const step =
+      typeof settings.tickInterval === "number" && settings.tickInterval > 0
+        ? settings.tickInterval
+        : DEFAULT_INTERVAL;
+
     interval = setInterval(() => {
-      seconds += settings.tickInterval;
-    }, settings.tickInterval * 1000);
+      elapsedMs += step;
+    }, step);
   }
 
-  function format(s: number) {
-    if (settings.displayFormat === "ms") {
-      const m = Math.floor(s / 60);
-      const sec = s % 60;
-      return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
-    }
-    return new Date(s * 1000).toISOString().substring(11, 19);
+  function format(ms: number) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const hundredths = Math.floor((ms % 1000) / 10);
+
+    return (
+      String(minutes).padStart(2, "0") +
+      ":" +
+      String(seconds).padStart(2, "0") +
+      ":" +
+      String(hundredths).padStart(2, "0")
+    );
   }
 
   onMount(() => {
@@ -76,7 +102,7 @@
 </script>
 
 <div class="stopwatch">
-  <div class="time">{format(seconds)}</div>
+  <div class="time">{format(elapsedMs)}</div>
 
   <button on:click={start} disabled={running && !paused}>
     Start
@@ -90,7 +116,7 @@
     Pause
   </button>
 
-  <button on:click={stop} disabled={!running}>
+  <button on:click={stop}>
     Stop
   </button>
 </div>

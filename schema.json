@@ -1,0 +1,32 @@
+{
+  "type": "object",
+  "properties": {
+    "autoStart": {
+      "type": "boolean",
+      "title": "Auto start",
+      "description": "Start the stopwatch automatically when the component loads.",
+      "default": false
+    },
+    "emitStartTime": {
+      "type": "boolean",
+      "title": "Emit start time",
+      "description": "Emit the current timestamp when the stopwatch starts.",
+      "default": false
+    },
+    "emitOnPause": {
+      "type": "boolean",
+      "title": "Emit elapsed time on pause",
+      "description": "Emit elapsed minutes when the stopwatch is paused.",
+      "default": false
+    },
+    "tickInterval": {
+      "type": "number",
+      "title": "Tick interval (ms)",
+      "description": "Update interval in milliseconds. 10 ms is recommended for hundredths precision.",
+      "default": 10,
+      "minimum": 5,
+      "maximum": 1000
+    }
+  },
+  "required": []
+}
